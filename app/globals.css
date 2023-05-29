@@ -2,26 +2,56 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
-}
+@layer components {
+    /*Change text in autofill textbox*/
+    input:-webkit-autofill {
+        transition: background-color 5000s ease-in-out 0s;
+        -webkit-text-fill-color: #d1d5db;
+    }
+    /* 
+    em-emoji-picker {
+        --background-rgb: 85, 170, 255;
+        --border-radius: 24px;
+        --category-icon-size: 24px;
+        --color-border-over: rgba(0, 0, 0, 0.1);
+        --color-border: rgba(0, 0, 0, 0.05);
+        --font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
+        --font-size: 20px;
+        --rgb-accent: 255, 105, 180;
+        --rgb-background: 262, 240, 283;
+        --rgb-color: 102, 51, 153;
+        --rgb-input: 255, 235, 235;
+        --shadow: 5px 5px 15px -8px rebeccapurple;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
-}
+        height: 50vh;
+        min-height: 400px;
+        max-height: 800px;
+      } */
 
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+    .scrollbar {
+        scrollbar-width: thin;
+        scrollbar-color: #282828 transparent;
+    }
+
+    .scrollbar::-webkit-scrollbar {
+        @apply w-[9px];
+    }
+
+    .scrollbar::-webkit-scrollbar-thumb {
+        @apply border-[2px] border-solid border-transparent bg-[#1b1e28]   bg-clip-content;
+    }
+
+    .scrollbar::-webkit-scrollbar-track {
+        @apply bg-transparent;
+    }
+
+    input[type="text"]:focus ~ .input-text,
+    input[type="text"]:not(:placeholder-shown) ~ .input-text {
+        @apply text-emerald-400 transform -translate-y-6 -translate-x-2 scale-90;
+    }
+
+    input[type="password"]:focus ~ .input-text,
+    input[type="password"]:not(:placeholder-shown) ~ .input-text {
+        @apply text-emerald-400 transform -translate-y-6 -translate-x-2 scale-90;
+    }
 }
