@@ -3,7 +3,7 @@ import SupabaseContext from "@/context/SupabaseContext/SupabaseContext";
 import debounce from "just-debounce-it";
 
 interface SearchResult {
-    id: number;
+    id: string;
     created_at: string;
     email: string;
     status: string;

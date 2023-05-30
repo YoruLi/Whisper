@@ -13,6 +13,7 @@ export interface User {
 }
 
 type openedChat = {
+    id: string | null;
     profile: null | Profile;
     chat: Chat | null;
     messages: null | Message[];
