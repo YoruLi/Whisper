@@ -111,8 +111,13 @@ export const SupabaseProvider = ({ children }: { children: React.ReactNode }) =>
         });
     };
 
+    interface SendMessageResponse {
+        created_chat: Date | null;
+        inserted_message: Message | null;
+    }
+
     const sendMessageToChat = async (chatData: Chat, messageData: Message): Promise<any> => {
-        const { data, error } = await supabase
+        const { data, error }: { data: SendMessageResponse | null; error: any } = await supabase
             .rpc("send_message_to_chat", {
                 sender_profile_id: profile?.id,
                 receiver_profile_id: chatData.profile.id,
@@ -120,13 +125,12 @@ export const SupabaseProvider = ({ children }: { children: React.ReactNode }) =>
                 message: messageData,
             })
             .single();
-
         if (error) {
             console.error(error);
             return { success: false, error };
         }
 
-        const { created_chat, inserted_message } = data;
+        const { created_chat, inserted_message } = data as SendMessageResponse;
 
         return {
             ...chatData,
@@ -150,28 +154,33 @@ export const SupabaseProvider = ({ children }: { children: React.ReactNode }) =>
         }));
     };
 
-    const getChatRooms = async (chatroomId: any) => {
-        const { data, error } = await supabase.rpc("get_chatroom_info", {
-            cr_id: chatroomId,
-            p_id: profile.id,
-        });
+    const getChatRooms = async (chatroomId: Chat) => {
+        const { data, error } = await supabase
+            .rpc("get_chatroom_info", {
+                cr_id: chatroomId,
+                p_id: profile.id,
+            })
+            .single();
 
         if (error) {
             return { success: false, error };
         }
 
-        const { messages, profile: senderProfile } = data;
+        const { messages, profile: senderProfile }: any = data;
 
         return {
-            ...messages,
-            profile: { ...senderProfile },
+            ...(messages as object),
+            profile: {
+                ...(senderProfile as object),
+            },
         };
     };
 
-    const getMessages: getMessages = async (chat: any) => {
-        const { data: messages, error } = await supabase.from("messages").select().eq("chatroom_id", chat.chatroom_id);
+    const getMessages: getMessages = async (chat: any, signal) => {
+        const { data: messages, error } = await supabase.from("messages").select().eq("chatroom_id", chat.chatroom_id).abortSignal(signal);
 
         if (error) {
+            console.log("message error", error);
             return { sucess: false, error };
         }
 

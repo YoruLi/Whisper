@@ -9,7 +9,6 @@ import { ActiveList, setOpenedChat } from "./types.d";
 import { Type } from "./types.d";
 import { initialState } from "./initialState";
 import { supabase } from "@/utils/supabase";
-import { usePathname } from "next/navigation";
 import { RealtimeChannel } from "@supabase/realtime-js";
 import { formatDate } from "@/data/formatDate";
 
@@ -20,7 +19,6 @@ export default function AppProvider({ children }: { children: React.ReactNode })
     const [isTyping, setIsTyping] = useState(false);
     const channelTypingRef = useRef<RealtimeChannel | undefined>();
 
-    const pathname = usePathname();
     const reset = () => {
         dispatch({
             type: Type.SET_RESET,
@@ -95,13 +93,19 @@ export default function AppProvider({ children }: { children: React.ReactNode })
 
         if (!openedChat || openedChat.messages) return;
 
-        getMessages(openedChat).then((message: any) => {
+        const abortController = new AbortController();
+
+        getMessages(openedChat, abortController.signal).then((message: any) => {
             if (!message) {
                 return console.log("Hubo un error al cargar los mensajes");
             }
 
             updateChats({ ...openedChat, messages: message ?? [] });
         });
+
+        return () => {
+            abortController.abort();
+        };
     }, [state.openedChat]);
 
     // message on realtime
@@ -217,42 +221,42 @@ export default function AppProvider({ children }: { children: React.ReactNode })
         };
     }, [session, profile, updateLastSeen]);
 
-    useEffect(() => {
-        if (!session || !profile) {
-            return;
-        }
-        const { openedChat } = state;
-        const profileChannelSubscription = supabase
-            .channel("test:profile")
-            .on(
-                "postgres_changes",
-                {
-                    schema: "public",
-                    event: "UPDATE",
-                    filter: `id=eq.${state.openedChat?.profile?.id}`,
-                    table: "profiles",
-                },
-                ({ new: user }) => {
-                    const chat = state.chats.find(({ profile }) => user);
-                    const isOpenedChat = state.openedChat && state.openedChat.profile?.id === chat?.profile.id;
+    // useEffect(() => {
+    //     if (!session || !profile) {
+    //         return;
+    //     }
+    //     const { openedChat } = state;
+    //     const profileChannelSubscription = supabase
+    //         .channel("test:profile")
+    //         .on(
+    //             "postgres_changes",
+    //             {
+    //                 schema: "public",
+    //                 event: "UPDATE",
+    //                 filter: `id=eq.${state.openedChat?.profile?.id}`,
+    //                 table: "profiles",
+    //             },
+    //             ({ new: user }) => {
+    //                 const chat = state.chats.find(({ profile }) => user);
+    //                 const isOpenedChat = state.openedChat && state.openedChat.profile?.id === chat?.profile.id;
 
-                    updateChats({
-                        ...chat,
-                        ...(isOpenedChat && {
-                            profile: {
-                                ...openedChat.profile,
-                                last_seen: user.last_seen,
-                            },
-                        }),
-                    });
-                }
-            )
-            .subscribe();
+    //                 updateChats({
+    //                     ...chat,
+    //                     ...(isOpenedChat && {
+    //                         profile: {
+    //                             ...openedChat.profile,
+    //                             last_seen: user.last_seen,
+    //                         },
+    //                     }),
+    //                 });
+    //             }
+    //         )
+    //         .subscribe();
 
-        return () => {
-            supabase.removeChannel(profileChannelSubscription);
-        };
-    }, [state.openedChat]);
+    //     return () => {
+    //         supabase.removeChannel(profileChannelSubscription);
+    //     };
+    // }, [state.openedChat]);
 
     useEffect(() => {
         const { openedChat } = state;
