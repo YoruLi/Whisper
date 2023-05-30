@@ -2,6 +2,9 @@ import React from "react";
 import { supabase } from "@/utils/supabase";
 import Chat from "@/components/Chat";
 
+export async function generateMetadata({ params: { chatId } }: { params: { chatId: string } }) {
+    return { title: `${chatId} | chat` };
+}
 async function getProfileId() {
     const { data: profile } = await supabase.from("profiles").select();
 
@@ -10,7 +13,11 @@ async function getProfileId() {
     });
 }
 
-export default async function page({ params: { id } }: { params: { id: string } }) {
-    const { data } = await supabase.from("profiles").select().match({ id });
+interface PageProps {
+    params: {
+        chatId: string;
+    };
+}
+export default function page({ params: { chatId } }: PageProps) {
     return <Chat />;
 }
