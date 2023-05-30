@@ -13,14 +13,10 @@ interface Props {
 export default function Search({ search, setSearch, getResults }: Props) {
     const handleSearch = (evt: FormEvent<HTMLFormElement>) => {
         evt.preventDefault();
-        getResults.flush();
     };
     return (
         <>
-            <form
-                className="flex-1 px-3 justify-center items-center flex relative"
-                onSubmit={handleSearch}
-            >
+            <form className="flex-1 px-3 justify-center items-center flex relative" onSubmit={handleSearch}>
                 <input
                     type="text"
                     placeholder="Search chat..."

@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Chat as IChat } from "@/context/types";
 
 interface SearchResult {
-    id: number;
+    id: string;
     created_at: string;
     email: string;
     status: string;
@@ -34,15 +34,12 @@ export default function Results({ results, setSearch }: Props) {
             {withoutResults ? (
                 <span className="text-center">No se encontraron resultados...</span>
             ) : (
-                results?.map(profileResult => {
+                results &&
+                results.map(profileResult => {
                     const { email, status, id } = profileResult;
 
                     return (
-                        <div
-                            key={id}
-                            className="p-3.5 flex hover:bg-[#130c1886]"
-                            onClick={() => handleResultClick(profileResult)}
-                        >
+                        <div key={id} className="p-3.5 flex hover:bg-[#130c1886]" onClick={() => handleResultClick(profileResult)}>
                             <ProfilePicture {...profileResult} />
 
                             <div className="flex flex-col items-center w-full ">

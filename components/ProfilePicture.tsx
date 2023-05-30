@@ -20,6 +20,7 @@ export default function ProfilePicture({ profile_picture, email, size, classname
                 alt={`Foto de perfil de ${email}`}
                 width={600}
                 height={600}
+                referrerPolicy="no-referrer"
                 priority
             />
         </button>

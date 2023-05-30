@@ -2,7 +2,7 @@ import { Session, User, Provider, PostgrestError } from "@supabase/supabase-js";
 import { openedChat } from "./AppContext/types";
 
 export interface SupabaseState {
-    session: Session | null;
+    session: Session | User | null;
     profile: Profile | null;
 }
 
@@ -28,7 +28,10 @@ export type handleSignUp = (event: React.FormEvent<HTMLFormElement>) => Promise<
 export type handleLogin = (event: React.FormEvent<HTMLFormElement>) => Promise<void>;
 export type getChatRooms = (chatroomId: Chat[]) => Promise<void>;
 export type logOut = () => void;
-export type getMessages = (chat: openedChat) => Promise<{ [x: string]: Message }[] | { sucess: boolean; error: PostgrestError }>;
+export type getMessages = (
+    chat: openedChat["chat"]["chatroom_id"],
+    abortControllerSignal: AbortSignal
+) => Promise<{ [x: string]: Message }[] | { sucess: boolean; error: PostgrestError }>;
 
 export type getChats = () => Promise<
     | {

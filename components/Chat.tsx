@@ -63,12 +63,6 @@ export default function Chat() {
     };
 
     useEffect(() => {
-        return () => {
-            setOpenedChat(null);
-        };
-    }, []);
-
-    useEffect(() => {
         if (showPickerSelect) {
             document.addEventListener("click", handleClickOutsidePickerEmoji);
         } else {
@@ -103,7 +97,7 @@ export default function Chat() {
                             messages ? "flex flex-col gap-4 p-4 md:px-8 lg:justify-end 2xl:px-16 landscape:px-6" : "grid place-items-center"
                         }  `}
                     >
-                        {messages ? (
+                        {messages && messages.length > 0 ? (
                             messages.map((msg, index) => {
                                 const { content, id, profile_id } = msg;
                                 const ownMessage = profile?.id === profile_id;
@@ -137,7 +131,7 @@ export default function Chat() {
                                 );
                             })
                         ) : (
-                            <Spinner sm={false} />
+                            <span className="text-emerald-400 text-xs animate-pulse">No hay mensajes aun...</span>
                         )}
                     </div>
                 </main>
