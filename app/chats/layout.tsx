@@ -13,8 +13,8 @@ export default function ChatsLayout({ children }: { children: React.ReactNode })
                 <WithOutChats />
             ) : (
                 <div
-                    className={`lg:static lg:min-h-screen lg:w-full lg:flex  w-full ${
-                        state.openedChat ? "absolute z-30 min-h-screen" : "hidden"
+                    className={`lg:static lg:min-h-screen lg:w-full lg:flex  w-full  ${
+                        state.openedChat ? "absolute z-30 min-h-screen h-[calc(100dvh)]" : "hidden"
                     }  `}
                 >
                     {children}
