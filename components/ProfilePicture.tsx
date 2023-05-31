@@ -16,7 +16,7 @@ export default function ProfilePicture({ profile_picture, email, size, classname
         >
             <Image
                 src={profile_picture ?? "../imgs/placeholder.svg"}
-                className={`${classname} rounded-full block`}
+                className={`${classname} rounded-full block min-h-full`}
                 alt={`Foto de perfil de ${email}`}
                 width={600}
                 height={600}

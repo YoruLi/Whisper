@@ -11,11 +11,13 @@ import { initialState } from "./initialState";
 import { supabase } from "@/utils/supabase";
 import { RealtimeChannel } from "@supabase/realtime-js";
 import { formatDate } from "@/data/formatDate";
+import { usePathname, useRouter } from "next/navigation";
 
 export default function AppProvider({ children }: { children: React.ReactNode }) {
     const { getChats, session, profile, getMessages, updateLastSeen, sendMessageToChat, getChatRooms } = useContext(SupabaseContext);
     const [state, dispatch] = useReducer(AppReducer, initialState);
-
+    const path = usePathname();
+    const router = useRouter();
     const [isTyping, setIsTyping] = useState(false);
     const channelTypingRef = useRef<RealtimeChannel | undefined>();
 
@@ -221,42 +223,42 @@ export default function AppProvider({ children }: { children: React.ReactNode })
         };
     }, [session, profile, updateLastSeen]);
 
-    // useEffect(() => {
-    //     if (!session || !profile) {
-    //         return;
-    //     }
-    //     const { openedChat } = state;
-    //     const profileChannelSubscription = supabase
-    //         .channel("test:profile")
-    //         .on(
-    //             "postgres_changes",
-    //             {
-    //                 schema: "public",
-    //                 event: "UPDATE",
-    //                 filter: `id=eq.${state.openedChat?.profile?.id}`,
-    //                 table: "profiles",
-    //             },
-    //             ({ new: user }) => {
-    //                 const chat = state.chats.find(({ profile }) => user);
-    //                 const isOpenedChat = state.openedChat && state.openedChat.profile?.id === chat?.profile.id;
+    useEffect(() => {
+        if (!session || !profile) {
+            return;
+        }
+        const { openedChat } = state;
+        const profileChannelSubscription = supabase
+            .channel("test:profile")
+            .on(
+                "postgres_changes",
+                {
+                    schema: "public",
+                    event: "UPDATE",
+                    filter: `id=eq.${state.openedChat?.profile?.id}`,
+                    table: "profiles",
+                },
+                ({ new: user }) => {
+                    const chat = state.chats.find(({ profile }) => user);
+                    const isOpenedChat = state.openedChat && state.openedChat.profile?.id === chat?.profile.id;
 
-    //                 updateChats({
-    //                     ...chat,
-    //                     ...(isOpenedChat && {
-    //                         profile: {
-    //                             ...openedChat.profile,
-    //                             last_seen: user.last_seen,
-    //                         },
-    //                     }),
-    //                 });
-    //             }
-    //         )
-    //         .subscribe();
+                    updateChats({
+                        ...chat,
+                        ...(isOpenedChat && {
+                            profile: {
+                                ...openedChat.profile,
+                                last_seen: user.last_seen,
+                            },
+                        }),
+                    });
+                }
+            )
+            .subscribe();
 
-    //     return () => {
-    //         supabase.removeChannel(profileChannelSubscription);
-    //     };
-    // }, [state.openedChat]);
+        return () => {
+            supabase.removeChannel(profileChannelSubscription);
+        };
+    }, [state.openedChat]);
 
     useEffect(() => {
         const { openedChat } = state;
@@ -270,10 +272,13 @@ export default function AppProvider({ children }: { children: React.ReactNode })
             }, 2000);
         };
 
-        const onTyping = () => {
-            setIsTyping(true);
-            hideTextTypingIndicator();
-            console.log("esta escribiendo");
+        const onTyping = (payload: any) => {
+            const userId = payload;
+            if (userId.payload !== profile.id) {
+                setIsTyping(true);
+                hideTextTypingIndicator();
+                console.log("esta escribiendo");
+            }
         };
 
         channelTyping.on("broadcast", { event: "typing" }, onTyping).subscribe();
@@ -287,6 +292,7 @@ export default function AppProvider({ children }: { children: React.ReactNode })
 
     const onTyPingEvent = throttle(() => {
         if (!channelTypingRef.current) return;
+        if (isTyping) return;
         channelTypingRef.current.send({
             type: "broadcast",
             event: "typing",
@@ -297,6 +303,13 @@ export default function AppProvider({ children }: { children: React.ReactNode })
     const sendTypingEvent = useCallback(() => {
         onTyPingEvent();
     }, [onTyPingEvent]);
+
+    // fix mobile
+    useEffect(() => {
+        if (path === "/chats" && state.openedChat && state.openedChat.profile) {
+            setOpenedChat(initialState.openedChat);
+        }
+    }, [path]);
 
     return (
         <AppContext.Provider value={{ state, setOpenedChat, sendMessage, reset, isTyping, sendTypingEvent }}>

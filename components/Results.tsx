@@ -25,7 +25,7 @@ export default function Results({ results, setSearch }: Props) {
 
         setOpenedChat(foundedChat ? foundedChat : { profile: profileResult, messages: [] });
 
-        router.push(`chats/${profileResult.id}`);
+        router.push(`chats/${profileResult.email}`);
     };
 
     const withoutResults = results?.length === 0;
@@ -39,12 +39,11 @@ export default function Results({ results, setSearch }: Props) {
                     const { email, status, id } = profileResult;
 
                     return (
-                        <div key={id} className="p-3.5 flex hover:bg-[#130c1886]" onClick={() => handleResultClick(profileResult)}>
+                        <div key={id} className="p-3.5 flex gap-4 hover:bg-[#130c1886]" onClick={() => handleResultClick(profileResult)}>
                             <ProfilePicture {...profileResult} />
-
-                            <div className="flex flex-col items-center w-full ">
-                                <span className="text-sm font-medium text-secondary">{email}</span>
-                                <span className="text-xs text-secondary-dark">{status}</span>
+                            <div className="flex flex-col">
+                                <span className="text-sm font-medium">{email}</span>
+                                <span className="text-xs text-slate-500">{status}</span>
                             </div>
                         </div>
                     );

@@ -13,6 +13,7 @@ import Spinner from "./Spinner";
 import { useRouter } from "next/navigation";
 import svgs from "@/data/svgs";
 import SvgButton from "./SvgButton";
+import { initialState } from "@/context/AppContext/initialState";
 
 export default function Chat() {
     const router = useRouter();
@@ -32,7 +33,7 @@ export default function Chat() {
     };
 
     const handleBackClick = () => {
-        setOpenedChat(null);
+        setOpenedChat(initialState.openedChat);
         router.push("/chats");
     };
 
@@ -76,7 +77,7 @@ export default function Chat() {
 
     return (
         <>
-            <div className="bg-[#101218] w-full flex flex-col ">
+            <div className="bg-[#101218] w-full flex flex-col h-full">
                 <header className="bg-[#101218] hover:bg-[#1e1f27] transition-colors duration-500 flex items-center justify-between p-2 lg:p-3 ">
                     <div className=" flex gap-3 justify-center items-center ">
                         <SvgButton path={svgs.leftArrow.path} viewBox={svgs.leftArrow.viewBox} onClick={handleBackClick} />
@@ -91,9 +92,9 @@ export default function Chat() {
                         </div>
                     </div>
                 </header>
-                <main className="scrollbar max-h-[calc(100vh-140px)] lg:max-h-[calc(100vh-68px)] [overflow-y:overlay]  ">
+                <main className="scrollbar max-h-[calc(100vh-60px)] lg:max-h-[calc(100vh-68px)] [overflow-y:overlay]  ">
                     <div
-                        className={`min-h-[calc(100vh-60px-80px)] lg:min-h-[calc(100vh-60px-80px)] gap-1 flex ${
+                        className={`min-h-[calc(100vh-60px-120px)] lg:min-h-[calc(100vh-60px-80px)] gap-1 flex lg:justify-end ${
                             messages ? "flex flex-col gap-4 p-4 md:px-8 lg:justify-end 2xl:px-16 landscape:px-6" : "grid place-items-center"
                         }  `}
                     >

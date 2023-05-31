@@ -8,8 +8,8 @@ export async function generateMetadata({ params: { chatId } }: { params: { chatI
 async function getProfileId() {
     const { data: profile } = await supabase.from("profiles").select();
 
-    return profile?.map(({ id }) => {
-        id;
+    return profile?.map(({ email }) => {
+        email;
     });
 }
 
