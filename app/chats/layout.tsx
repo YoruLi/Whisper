@@ -4,19 +4,20 @@ import Chats from "@/components/Chats";
 import WithOutChats from "@/components/WithOutChats";
 import AppContext from "@/context/AppContext/AppContext";
 import React, { useContext } from "react";
+
 export default function ChatsLayout({ children }: { children: React.ReactNode }) {
     const { state } = useContext(AppContext);
+
+    const isChatOpen = state.openedChat && state.openedChat.messages && state.openedChat.messages.length === 0 && !state.openedChat.profile;
+
     return (
-        <div className="relative flex w-full ">
+        <div className="relative flex w-full min-h-full">
             <Chats />
-            {!(state.openedChat && state.openedChat.messages?.length !== 0) ? (
+
+            {isChatOpen ? (
                 <WithOutChats />
             ) : (
-                <div
-                    className={`lg:static lg:min-h-screen lg:w-full lg:flex  w-full  ${
-                        state.openedChat ? "absolute z-30 min-h-screen h-[calc(100dvh)]" : "hidden"
-                    }  `}
-                >
+                <div className={`${!isChatOpen ? "absolute z-50 h-full w-full" : "hidden"} lg:static lg:h-full lg:w-full lg:flex w-full`}>
                     {children}
                 </div>
             )}

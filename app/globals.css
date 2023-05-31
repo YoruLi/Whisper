@@ -2,6 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+    body,
+    html {
+        height: 100vh;
+        height: 100%;
+    }
+}
 @layer components {
     /*Change text in autofill textbox*/
     input:-webkit-autofill {

@@ -24,7 +24,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                     <AuthFormProvider>
                         <AppProvider>
                             <Suspense fallback={<Loading />}>
-                                <div className="flex h-screen w-full overflow-hidden">
+                                <div className="flex h-full w-full overflow-hidden content">
                                     <Aside />
                                     {children}
                                 </div>
