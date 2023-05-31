@@ -76,7 +76,7 @@ export default function Chat() {
 
     return (
         <>
-            <div className="bg-[#101218] w-full flex flex-col min-h-screen">
+            <div className="bg-[#101218] w-full flex flex-col h-[calc(100dvh)]">
                 <header className="bg-[#101218] hover:bg-[#1e1f27] transition-colors duration-500 flex items-center justify-between p-2 lg:p-3 ">
                     <div className=" flex gap-3 justify-center items-center ">
                         <SvgButton path={svgs.leftArrow.path} viewBox={svgs.leftArrow.viewBox} onClick={handleBackClick} />
