@@ -6,11 +6,10 @@ import AppContext from "@/context/AppContext/AppContext";
 import React, { useContext } from "react";
 export default function ChatsLayout({ children }: { children: React.ReactNode }) {
     const { state } = useContext(AppContext);
-
     return (
         <div className="relative flex w-full">
             <Chats />
-            {!state.openedChat ?? null ? (
+            {!(state.openedChat && state.openedChat.messages?.length !== 0) ? (
                 <WithOutChats />
             ) : (
                 <div

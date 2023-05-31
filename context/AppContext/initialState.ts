@@ -5,5 +5,3 @@ export const initialState: Readonly<AppState> = {
     chats: [],
     activeList: {},
 };
-
-// { profile: null, chat: null, messages: [] }
